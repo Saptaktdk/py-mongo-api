@@ -1,0 +1,38 @@
+version: "3.8"
+services:
+  api:
+    container_name: book_api_server
+
+    ##?Build from current directory
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    environment:
+      MONGO_CONN_URL: "mongodb://admin:admin123@book_db_server:27017/book_db?authSource=admin"
+      MONGO_CONN_DB_NAME: "book_db"
+
+    ##?Expose port
+    ports:
+      - 8080:8080
+
+    depends_on:
+      - db
+
+  db:
+    #? Set container name
+    container_name: book_db_server
+    image: mongo:7.0.2
+
+    #? Restart if down
+    restart: always
+
+    #? Environment
+    environment:
+      MONGO_INITDB_ROOT_USERNAME : "admin"
+      MONGO_INITDB_ROOT_PASSWORD : "admin123"
+      MONGO_INITDB_DATABASE : "book_db"
+
+    #? Ports
+    ports:
+      - 27017:27017
